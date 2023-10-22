@@ -19,7 +19,6 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v4
     - name: Test defaults
-      id: test-linux
       uses: ./
 
   macos:
@@ -28,7 +27,6 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v4
     - name: Test defaults
-      id: test-macos
       uses: ./
 
   windows:
@@ -37,5 +35,4 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v4
     - name: Test defaults
-      id: test-windows
       uses: ./

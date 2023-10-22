@@ -13,10 +13,14 @@ inputs:
     default: main master
 
 outputs:
+  bumped:
+    description: >-
+      Set to `true` if the changelog was updated and the new version set.
+    value: ${{ steps.bump.outputs.bumped }}
   new-version:
     description: >-
       The new version written to the changelog and to the project source files.
-    value: ${{ steps.setup.outputs.archive }}
+    value: ${{ steps.bump.outputs.archive }}
 
 runs:
   using: 'composite'
@@ -42,11 +46,25 @@ runs:
       repo: prantlf/vp
   - name: Update changelog and bump version
     if: ${{ steps.setup.outputs.enable == 'true' }}
+    id: bump
     shell: bash
     run: |
-      VP_OPTIONS="--no-commit -v"
+      VP_OPTIONS="--no-commit --no-failure -v"
       if [[ ! -f "v.mod" ]]; then
-        echo "v.mod not found"
+        echo "v.mod not found, only updating changelog"
         VP_OPTIONS="$VP_OPTIONS --no-bump"
       fi
-      vp $VP_OPTIONS version
+      VP_OUT=$(vp $VP_OPTIONS version);
+      if [ $? -eq 0 ]; then
+        echo "$VP_OUT"
+        VP_VER_RE="version ([0-9]+\\.[0-9]+\\.[0-9]+)"
+        if [[ "$VP_OUT" =~ $VP_VER_RE ]]; then
+          echo "new-version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          echo "bumped=true" >> $GITHUB_OUTPUT
+        fi
+      else
+        if [[ "$VP_OUT" != "" ]]; then
+          echo "$VP_OUT"
+        fi
+        exit 1
+      fi

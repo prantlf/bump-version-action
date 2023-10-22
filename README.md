@@ -57,6 +57,12 @@ Branches which this action should run for, which are used to publishing releases
 
 The following parameters can be accessed by the `github` context:
 
+### bumped
+
+Type: `String`<br>
+
+Set to `true` if the changelog was updated and the new version set.
+
 ### new-version
 
 Type: `String`<br>
