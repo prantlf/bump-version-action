@@ -1,0 +1,52 @@
+name: 'Update Changelog and Bump Version'
+description: 'GitHub action for updating changelog and bumping the project version using git commit messages.'
+author: prantlf
+
+branding:
+  icon: sunrise
+  color: yellow
+
+inputs:
+  branches:
+    description: >-
+      Branches which this action should run for, which are used to publishing releases. Use spaces for separating the branch names. If you want to use multiple lines in YAML, introduce them with ">-". If you want to allow all branches, set the value to "*".
+    default: main master
+
+outputs:
+  new-version:
+    description: >-
+      The new version written to the changelog and to the project source files.
+    value: ${{ steps.setup.outputs.archive }}
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Setup parameters
+    id: setup
+    env:
+      BV_BRANCHES: ${{ inputs.branches }}
+    shell: bash
+    run: |
+      if [[ "$BV_BRANCHES" == "*" || " $BV_BRANCHES " == *" $GITHUB_REF_NAME "* ]]; then
+        echo "enable=true" >> $GITHUB_OUTPUT
+      fi
+  - name: Install newchanges
+    if: ${{ steps.setup.outputs.enable == 'true' }}
+    uses: prantlf/install-release-action@v1
+    with:
+      repo: prantlf/v-newchanges
+  - name: Install vp
+    if: ${{ steps.setup.outputs.enable == 'true' }}
+    uses: prantlf/install-release-action@v1
+    with:
+      repo: prantlf/vp
+  - name: Update changelog and bump version
+    if: ${{ steps.setup.outputs.enable == 'true' }}
+    shell: bash
+    run: |
+      VP_OPTIONS="--no-commit -v"
+      if [[ ! -f "v.mod" ]]; then
+        echo "v.mod not found"
+        VP_OPTIONS="$VP_OPTIONS --no-bump"
+      fi
+      vp $VP_OPTIONS version
