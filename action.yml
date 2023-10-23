@@ -19,6 +19,10 @@ inputs:
     description: >-
       Can be set to `true` to only print what would be done without actually doing it.
     default: false
+  debug:
+    description: >-
+      Can be set to `true` to enable debug logging of the supporting tools. Debug logging will be enabled also if it's enabled on the runner.
+    default: false
 
 outputs:
   bumped:
@@ -63,6 +67,7 @@ runs:
     shell: bash
     env:
       BV_DRY: ${{ inputs.dry-run }}
+      BV_DEBUG: ${{ inputs.debug }}
     run: |
       VP_OPTIONS="-v --no-commit --no-failure"
       if [[ ! -f "v.mod" ]]; then
@@ -74,7 +79,11 @@ runs:
         VP_OPTIONS="$VP_OPTIONS -d"
       fi
       echo "execute \"vp $VP_OPTIONS version\""
-      VP_OUT=$(vp $VP_OPTIONS version)
+      if [[ "$BV_DEBUG" == "true" || "$RUNNER_DEBUG" == "1" ]]; then
+        VP_OUT=$(DEBUG=* vp $VP_OPTIONS version)
+      else
+        VP_OUT=$(vp $VP_OPTIONS version)
+      fi
       if [ $? -eq 0 ]; then
         echo "$VP_OUT"
         VP_VER_RE="version ([0-9]+\\.[0-9]+\\.[0-9]+)"
@@ -83,14 +92,12 @@ runs:
           if [[ "$BV_DRY" != "true" ]]; then
             VP_LOG_RE=" written to \"([^\"]+)\""
             if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
+              echo "changed-files<<BV_CHANGES" >> $GITHUB_OUTPUT
+              echo "${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
               if [[ -f "v.mod" ]]; then
-                echo "changed-files<<BV_CHANGES" >> $GITHUB_OUTPUT
-                echo "${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
                 echo "v.mod" >> $GITHUB_OUTPUT
-                echo "BV_CHANGES" >> $GITHUB_OUTPUT
-              else
-                echo "changed-files=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
               fi
+              echo "BV_CHANGES" >> $GITHUB_OUTPUT
             else
               echo "changed files not detected"
               exit 1
