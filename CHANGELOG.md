@@ -1,5 +1,11 @@
 # Changes
 
+# [1.4.0](https://github.com/prantlf/bump-version-action/compare/v1.3.2...v1.4.0) (2023-10-23)
+
+## Features
+
+* Implement dry-run ([b9c8d18](https://github.com/prantlf/bump-version-action/commit/b9c8d185ab06dccacace444005e086a4eb66b5c4))
+
 # [1.3.2](https://github.com/prantlf/bump-version-action/compare/v1.3.1...v1.3.2) (2023-10-23)
 
 ## Bug Fixes
