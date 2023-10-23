@@ -11,6 +11,10 @@ inputs:
     description: >-
       Branches which this action should run for, which are used to publishing releases. Use spaces for separating the branch names. If you want to use multiple lines in YAML, introduce them with ">-". If you want to allow all branches, set the value to "*".
     default: main master
+  enable:
+    description: >-
+      Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
+    default: true
 
 outputs:
   bumped:
@@ -30,6 +34,7 @@ runs:
   using: 'composite'
   steps:
   - name: Setup parameters
+    if: ${{ inputs.enable == 'true' }}
     id: setup
     env:
       BV_BRANCHES: ${{ inputs.branches }}

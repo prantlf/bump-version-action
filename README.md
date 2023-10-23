@@ -53,6 +53,13 @@ Default: `'main master'`
 
 Branches which this action should run for, which are used to publishing releases. Use whitespace for separating the branch names. If you want to use multiple lines in YAML, introduce them with ">-". If you want to allow all branches, set the value to "*".
 
+### enable
+
+Type: `Boolean`<br>
+Default: `true`
+
+Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
+
 ## Outputs
 
 The following parameters can be accessed by the `github` context:
