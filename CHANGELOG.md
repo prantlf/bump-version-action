@@ -1,5 +1,11 @@
 # Changes
 
+# [1.3.1](https://github.com/prantlf/bump-version-action/compare/v1.3.0...v1.3.1) (2023-10-23)
+
+## Bug Fixes
+
+* Log the executed command ([ab4a338](https://github.com/prantlf/bump-version-action/commit/ab4a338cdee4f4f6464d57297d10591c899bb719))
+
 # [1.3.0](https://github.com/prantlf/bump-version-action/compare/v1.2.0...v1.3.0) (2023-10-23)
 
 ## Features
