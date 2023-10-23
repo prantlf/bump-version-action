@@ -1,5 +1,11 @@
 # Changes
 
+# [1.3.2](https://github.com/prantlf/bump-version-action/compare/v1.3.1...v1.3.2) (2023-10-23)
+
+## Bug Fixes
+
+* Correct multivalue action parameters ([7c1d58a](https://github.com/prantlf/bump-version-action/commit/7c1d58af86694e898a0c7fb082a71935fa6ddd6c))
+
 # [1.3.1](https://github.com/prantlf/bump-version-action/compare/v1.3.0...v1.3.1) (2023-10-23)
 
 ## Bug Fixes
