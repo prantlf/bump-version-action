@@ -69,6 +69,12 @@ Type: `String`<br>
 
 The new version written to the changelog and to the project source files.
 
+### changed-files
+
+Type: `String`<br>
+
+Files modified by this action, separated by spaces.
+
 ## License
 
 Copyright (C) 2023 Ferdinand Prantl

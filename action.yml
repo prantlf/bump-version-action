@@ -20,7 +20,11 @@ outputs:
   new-version:
     description: >-
       The new version written to the changelog and to the project source files.
-    value: ${{ steps.bump.outputs.archive }}
+    value: ${{ steps.bump.outputs.new-version }}
+  changed-files:
+    description: >-
+      Files modified by this action, separated by spaces.
+    value: ${{ steps.bump.outputs.changed-files }}
 
 runs:
   using: 'composite'
@@ -60,6 +64,16 @@ runs:
         VP_VER_RE="version ([0-9]+\\.[0-9]+\\.[0-9]+)"
         if [[ "$VP_OUT" =~ $VP_VER_RE ]]; then
           echo "new-version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          VP_LOG_RE=" written to \"([^\"]+)\""
+          if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
+            if [[ -f "v.mod" ]]; then
+              VP_EXTRA=" v.mod"
+            fi
+            echo "changed-files=${BASH_REMATCH[1]}$VP_EXTRA" >> $GITHUB_OUTPUT
+          else
+            echo "changed files not detected"
+            exit 1
+          fi
           echo "bumped=true" >> $GITHUB_OUTPUT
         fi
       else

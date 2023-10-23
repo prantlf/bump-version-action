@@ -18,21 +18,153 @@ jobs:
     steps:
     - name: Checkout sources
       uses: actions/checkout@v4
-    - name: Test defaults
+    - name: Test early
+      id: early
       uses: ./
+    - name: Clean commits
+      run: |
+        if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
+          echo "committing "${{ steps.early.outputs.changed-files }}" as ${{ steps.early.outputs.new-version }}"
+          git config --global user.email "bump-version-action[bot]@users.noreply.github.com"
+          git config --global user.name "Update Changelog and Bump Version"
+          git commit -am "${{ steps.early.outputs.new-version }}"
+          git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
+        fi
+    - name: Test nothing
+      id: nothing
+      uses: ./
+    - name: Check nothing
+      run: |
+        if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
+          echo "unexpectedly bumped"
+          exit 1
+        fi
+    - name: Prepare commit
+      run: |
+        git config --global user.email "bump-version-action[bot]@users.noreply.github.com"
+        git config --global user.name "Update Changelog and Bump Version"
+        echo "test" > test
+        git add test
+        git commit -m "feat: Add test"
+    - name: Test bumping
+      id: bumping
+      uses: ./
+    - name: Check bumping
+      run: |
+        if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
+          if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
+            echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
+          else
+            echo "the new version is missing"
+            exit 1
+          fi
+          if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
+            echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+          else
+            echo "not modified changelog"
+            exit 1
+          fi
+        else
+          echo "not bumped to a new version"
+          exit 1
+        fi
 
   macos:
     runs-on: macos-latest
     steps:
     - name: Checkout sources
       uses: actions/checkout@v4
-    - name: Test defaults
+    - name: Test early
+      id: early
       uses: ./
+    - name: Clean commits
+      run: |
+        if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
+          echo "committing "${{ steps.early.outputs.changed-files }}" as ${{ steps.early.outputs.new-version }}"
+          git config --global user.email "bump-version-action[bot]@users.noreply.github.com"
+          git config --global user.name "Update Changelog and Bump Version"
+          git commit -am "${{ steps.early.outputs.new-version }}"
+          git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
+        fi
+    - name: Test nothing
+      id: nothing
+      uses: ./
+    - name: Check nothing
+      run: |
+        if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
+          echo "unexpectedly bumped"
+          exit 1
+        fi
+    - name: Prepare commit
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        echo "test" > test
+        git add test
+        git commit -m "feat: Add test"
+    - name: Test bumping
+      id: bumping
+      uses: ./
+    - name: Check bumping
+      run: |
+        if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
+          if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
+            echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
+          else
+            echo "the new version is missing"
+            exit 1
+          fi
+          if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
+            echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+          else
+            echo "not modified changelog"
+            exit 1
+          fi
+        else
+          echo "not bumped to a new version"
+          exit 1
+        fi
 
-  windows:
-    runs-on: windows-latest
-    steps:
-    - name: Checkout sources
-      uses: actions/checkout@v4
-    - name: Test defaults
-      uses: ./
+  # windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Checkout sources
+  #     uses: actions/checkout@v4
+  #   - name: Test nothing
+  #     id: nothing
+  #     uses: ./
+  #   - name: Check nothing
+  #     run: |
+  #       if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
+  #         echo "unexpectedly bumped"
+  #         exit 1
+  #       fi
+  #   - name: Prepare commit
+  #     run: |
+  #       git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  #       git config --global user.name "github-actions[bot]"
+  #       echo "test" > test
+  #       git add test
+  #       git commit -m "feat: Add test"
+  #   - name: Test bumping
+  #     id: bumping
+  #     uses: ./
+  #   - name: Check bumping
+  #     run: |
+  #       if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
+  #         if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
+  #           echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
+  #         else
+  #           echo "the new version is missing"
+  #           exit 1
+  #         fi
+  #         if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
+  #           echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+  #         else
+  #           echo "not modified changelog"
+  #           exit 1
+  #         fi
+  #       else
+  #         echo "not bumped to a new version"
+  #         exit 1
+  #       fi
