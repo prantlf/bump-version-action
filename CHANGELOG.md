@@ -1,5 +1,11 @@
 # Changes
 
+# [1.2.0](https://github.com/prantlf/bump-version-action/compare/v1.1.0...v1.2.0) (2023-10-23)
+
+## Features
+
+* Add input "enable" ([2dca931](https://github.com/prantlf/bump-version-action/commit/2dca93102c9668d0adad872b4fc1949bc964554d))
+
 # [1.1.0](https://github.com/prantlf/bump-version-action/compare/v1.0.0...v1.1.0) (2023-10-23)
 
 ## Features
