@@ -15,6 +15,10 @@ inputs:
     description: >-
       Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
     default: true
+  dry-run:
+    description: >-
+      Can be set to `true` to only print what would be done without actually doing it.
+    default: false
 
 outputs:
   bumped:
@@ -57,11 +61,17 @@ runs:
     if: ${{ steps.setup.outputs.enable == 'true' }}
     id: bump
     shell: bash
+    env:
+      BV_DRY: ${{ inputs.dry-run }}
     run: |
-      VP_OPTIONS="--no-commit --no-failure -v"
+      VP_OPTIONS="-v --no-commit --no-failure"
       if [[ ! -f "v.mod" ]]; then
         echo "v.mod not found, only updating changelog"
         VP_OPTIONS="$VP_OPTIONS --no-bump"
+      fi
+      if [[ "$BV_DRY" == "true" ]]; then
+        echo "dry-run enabled"
+        VP_OPTIONS="$VP_OPTIONS -d"
       fi
       VP_OUT=$(vp $VP_OPTIONS version);
       if [ $? -eq 0 ]; then
@@ -69,17 +79,19 @@ runs:
         VP_VER_RE="version ([0-9]+\\.[0-9]+\\.[0-9]+)"
         if [[ "$VP_OUT" =~ $VP_VER_RE ]]; then
           echo "new-version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-          VP_LOG_RE=" written to \"([^\"]+)\""
-          if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
-            if [[ -f "v.mod" ]]; then
-              VP_EXTRA=" v.mod"
+          if [[ "$BV_DRY" != "true" ]]; then
+            VP_LOG_RE=" written to \"([^\"]+)\""
+            if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
+              if [[ -f "v.mod" ]]; then
+                VP_EXTRA=" v.mod"
+              fi
+              echo "changed-files=${BASH_REMATCH[1]}$VP_EXTRA" >> $GITHUB_OUTPUT
+            else
+              echo "changed files not detected"
+              exit 1
             fi
-            echo "changed-files=${BASH_REMATCH[1]}$VP_EXTRA" >> $GITHUB_OUTPUT
-          else
-            echo "changed files not detected"
-            exit 1
+            echo "bumped=true" >> $GITHUB_OUTPUT
           fi
-          echo "bumped=true" >> $GITHUB_OUTPUT
         fi
       else
         if [[ "$VP_OUT" != "" ]]; then

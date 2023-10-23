@@ -60,6 +60,13 @@ Default: `true`
 
 Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
 
+### dry-run
+
+Type: `Boolean`<br>
+Default: `false`
+
+Can be set to `true` to only print what would be done without actually doing it.
+
 ## Outputs
 
 The following parameters can be accessed by the `github` context:
