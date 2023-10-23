@@ -24,7 +24,8 @@ jobs:
     - name: Clean commits
       run: |
         if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
-          echo "committing "${{ steps.early.outputs.changed-files }}" as ${{ steps.early.outputs.new-version }}"
+          echo "committing ${{ steps.early.outputs.new-version }}:"
+          echo "${{ steps.early.outputs.changed-files }}"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git commit -am "${{ steps.early.outputs.new-version }}"
@@ -59,7 +60,8 @@ jobs:
             exit 1
           fi
           if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
-            echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+            echo "modified:"
+            echo "${{ steps.bumping.outputs.changed-files }}"
           else
             echo "not modified changelog"
             exit 1
@@ -80,7 +82,8 @@ jobs:
     - name: Clean commits
       run: |
         if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
-          echo "committing "${{ steps.early.outputs.changed-files }}" as ${{ steps.early.outputs.new-version }}"
+          echo "committing ${{ steps.early.outputs.new-version }}:"
+          echo "${{ steps.early.outputs.changed-files }}"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git commit -am "${{ steps.early.outputs.new-version }}"
@@ -115,7 +118,8 @@ jobs:
             exit 1
           fi
           if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
-            echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+            echo "modified:"
+            echo "${{ steps.bumping.outputs.changed-files }}"
           else
             echo "not modified changelog"
             exit 1
@@ -130,6 +134,19 @@ jobs:
   #   steps:
   #   - name: Checkout sources
   #     uses: actions/checkout@v4
+  #   - name: Test early
+  #     id: early
+  #     uses: ./
+  #   - name: Clean commits
+  #     run: |
+  #       if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
+  #         echo "committing ${{ steps.early.outputs.new-version }}:"
+  #         echo "${{ steps.early.outputs.changed-files }}"
+  #         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  #         git config --global user.name "github-actions[bot]"
+  #         git commit -am "${{ steps.early.outputs.new-version }}"
+  #         git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
+  #       fi
   #   - name: Test nothing
   #     id: nothing
   #     uses: ./
@@ -159,7 +176,8 @@ jobs:
   #           exit 1
   #         fi
   #         if [ "${{ steps.bumping.outputs.changed-files }}" != "" ]; then
-  #           echo "modified \"${{ steps.bumping.outputs.changed-files }}\""
+  #           echo "modified:"
+  #           echo "${{ steps.bumping.outputs.changed-files }}"
   #         else
   #           echo "not modified changelog"
   #           exit 1

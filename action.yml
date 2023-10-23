@@ -84,9 +84,13 @@ runs:
             VP_LOG_RE=" written to \"([^\"]+)\""
             if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
               if [[ -f "v.mod" ]]; then
-                VP_EXTRA=" v.mod"
+                echo "changed-files<<BV_CHANGES" >> $GITHUB_OUTPUT
+                echo "${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+                echo "v.mod" >> $GITHUB_OUTPUT
+                echo "BV_CHANGES" >> $GITHUB_OUTPUT
+              else
+                echo "changed-files=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
               fi
-              echo "changed-files=${BASH_REMATCH[1]}$VP_EXTRA" >> $GITHUB_OUTPUT
             else
               echo "changed files not detected"
               exit 1
