@@ -73,7 +73,8 @@ runs:
         echo "dry-run enabled"
         VP_OPTIONS="$VP_OPTIONS -d"
       fi
-      VP_OUT=$(vp $VP_OPTIONS version);
+      echo "execute \"vp $VP_OPTIONS version\""
+      VP_OUT=$(vp $VP_OPTIONS version)
       if [ $? -eq 0 ]; then
         echo "$VP_OUT"
         VP_VER_RE="version ([0-9]+\\.[0-9]+\\.[0-9]+)"
