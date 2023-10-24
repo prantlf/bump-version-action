@@ -1,5 +1,19 @@
 # Changes
 
+# [2.0.0](https://github.com/prantlf/bump-version-action/compare/v1.4.0...v2.0.0) (2023-10-24)
+
+## Features
+
+* Allow specifying extra files in which to bump the version number ([f76d27f](https://github.com/prantlf/bump-version-action/commit/f76d27f72b2d7acf9b6aad178aafe1755af411c3))
+
+## Bug Fixes
+
+* Detect the changed files using git ([bc21fc2](https://github.com/prantlf/bump-version-action/commit/bc21fc25abf989f8889add122cd7c567e0a8a361))
+
+## BREAKING CHANGES
+
+Instead of adding changelog and package descriptor to the changed files, git is used to detect the changed files. Although there probably are not other changed files in the local repo after running this action, there might be in some build configurations. In suich case, this action should be run as the first one, to collect only changes made by the version number bumping.
+
 # [1.4.0](https://github.com/prantlf/bump-version-action/compare/v1.3.2...v1.4.0) (2023-10-23)
 
 ## Features
