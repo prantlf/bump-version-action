@@ -1,5 +1,11 @@
 # Changes
 
+# [2.0.1](https://github.com/prantlf/bump-version-action/compare/v2.0.0...v2.0.1) (2023-10-24)
+
+## Bug Fixes
+
+* Remove quotes from bump-files ([7ebaf8e](https://github.com/prantlf/bump-version-action/commit/7ebaf8e624cbcb86ff4351b976a3a473a663287e))
+
 # [2.0.0](https://github.com/prantlf/bump-version-action/compare/v1.4.0...v2.0.0) (2023-10-24)
 
 ## Features
