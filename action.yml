@@ -15,6 +15,9 @@ inputs:
     description: >-
       Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
     default: true
+  bump-files:
+    description: >-
+      Extra files in which to bump the version number, in addition to the package description file.
   dry-run:
     description: >-
       Can be set to `true` to only print what would be done without actually doing it.
@@ -66,7 +69,7 @@ runs:
     id: bump
     shell: bash
     env:
-      BV_FILES: ${{ inputs.dry-run }}
+      BV_FILES: ${{ inputs.bump-files }}
       BV_DRY: ${{ inputs.dry-run }}
       BV_DEBUG: ${{ inputs.debug }}
     run: |
@@ -74,6 +77,10 @@ runs:
       if [[ ! -f "v.mod" ]]; then
         echo "v.mod not found, only updating changelog"
         VP_OPTIONS="$VP_OPTIONS --no-bump"
+      fi
+      if [[ "$BV_FILES" != "" ]]; then
+        echo "extra files to bump version in: \"$BV_FILES\""
+        VP_OPTIONS="$VP_OPTIONS -b \"$BV_FILES\""
       fi
       if [[ "$BV_DRY" == "true" ]]; then
         echo "dry-run enabled"
@@ -91,12 +98,6 @@ runs:
         if [[ "$VP_OUT" =~ $VP_VER_RE ]]; then
           echo "new-version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
           if [[ "$BV_DRY" != "true" ]]; then
-            VP_LOG_RE=" written to \"([^\"]+)\""
-            if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
-            else
-              echo "changes in changelog not confirmed"
-              exit 1
-            fi
             echo "execute: \"git ls-files --exclude-standard -m\""
             BV_CHANGES=$(git ls-files --exclude-standard -m)
             if [[ "$BV_CHANGES" != "" ]]; then

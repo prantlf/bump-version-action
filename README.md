@@ -9,10 +9,10 @@ Uses tools [newchanges] and [vp]. Uses git to detect changed files. Only platfor
 Update the change log and write the new version ot the project source files:
 
 ```yml
-- uses: prantlf/bump-version-action@v1
+- uses: prantlf/bump-version-action@v2
 ```
 
-Work only in specific release branches:
+Work only in specific release branches, bump the version number in an extra file:
 
 ```yml
 jobs:
@@ -21,9 +21,10 @@ jobs:
     - uses: actions/checkout@v4
     - uses: prantlf/setup-v-action@v2
     - run: ...
-    - uses prantlf/bump-version-action@v1
+    - uses prantlf/bump-version-action@v2
       with:
         branches: master v1.x
+        bump-files: src/newchanges.v
 ```
 
 **Attantion**: This action can be used only to update an already published project. The first publishing has to happen manually:
@@ -52,6 +53,12 @@ Type: `String`<br>
 Default: `'main master'`
 
 Branches which this action should run for, which are used to publishing releases. Use whitespace for separating the branch names. If you want to use multiple lines in YAML, introduce them with ">-". If you want to allow all branches, set the value to "*".
+
+### bump-files
+
+Type: `String`<br>
+
+Extra files in which to bump the version number, in addition to the package description file.
 
 ### enable
 
