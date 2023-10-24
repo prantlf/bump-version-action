@@ -79,8 +79,8 @@ runs:
         VP_OPTIONS="$VP_OPTIONS --no-bump"
       fi
       if [[ "$BV_FILES" != "" ]]; then
-        echo "extra files to bump version in: \"$BV_FILES\""
-        VP_OPTIONS="$VP_OPTIONS -b \"$BV_FILES\""
+        echo "extra files to bump version in: $BV_FILES"
+        VP_OPTIONS="$VP_OPTIONS -b $BV_FILES"
       fi
       if [[ "$BV_DRY" == "true" ]]; then
         echo "dry-run enabled"
