@@ -66,6 +66,7 @@ runs:
     id: bump
     shell: bash
     env:
+      BV_FILES: ${{ inputs.dry-run }}
       BV_DRY: ${{ inputs.dry-run }}
       BV_DEBUG: ${{ inputs.debug }}
     run: |
@@ -92,14 +93,20 @@ runs:
           if [[ "$BV_DRY" != "true" ]]; then
             VP_LOG_RE=" written to \"([^\"]+)\""
             if [[ "$VP_OUT" =~ $VP_LOG_RE ]]; then
+            else
+              echo "changes in changelog not confirmed"
+              exit 1
+            fi
+            echo "execute: \"git ls-files --exclude-standard -m\""
+            BV_CHANGES=$(git ls-files --exclude-standard -m)
+            if [[ "$BV_CHANGES" != "" ]]; then
+              echo "changes detected:"
+              echo "$BV_CHANGES"
               echo "changed-files<<BV_CHANGES" >> $GITHUB_OUTPUT
-              echo "${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-              if [[ -f "v.mod" ]]; then
-                echo "v.mod" >> $GITHUB_OUTPUT
-              fi
+              echo "$BV_CHANGES" >> $GITHUB_OUTPUT
               echo "BV_CHANGES" >> $GITHUB_OUTPUT
             else
-              echo "changed files not detected"
+              echo "no changes detected"
               exit 1
             fi
             echo "bumped=true" >> $GITHUB_OUTPUT

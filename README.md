@@ -2,7 +2,7 @@
 
 GitHub action for updating changelog and bumping the project version using git commit messages formatted according to [Conventional Commits] and [Semantic Versioning].
 
-Uses tools [newchanges] and [vp]. Only platforms Linux, macOS, Windows on the architecture X64 are supported.
+Uses tools [newchanges] and [vp]. Uses git to detect changed files. Only platforms Linux, macOS, Windows on the architecture X64 are supported.
 
 ## Usage
 
