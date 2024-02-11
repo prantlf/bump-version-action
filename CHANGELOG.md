@@ -1,5 +1,11 @@
 # Changes
 
+## [2.1.0](https://github.com/prantlf/bump-version-action/compare/v2.0.1...v2.1.0) (2024-02-11)
+
+### Features
+
+* Add no-vlang, no-node and no-rust input parameters ([cd861a2](https://github.com/prantlf/bump-version-action/commit/cd861a2842a56e557d8b303a36443cc70d3c52ec))
+
 ## [2.0.1](https://github.com/prantlf/bump-version-action/compare/v2.0.0...v2.0.1) (2023-10-24)
 
 ### Bug Fixes
