@@ -54,6 +54,27 @@ Default: `'main master'`
 
 Branches which this action should run for, which are used to publishing releases. Use whitespace for separating the branch names. If you want to use multiple lines in YAML, introduce them with ">-". If you want to allow all branches, set the value to "*".
 
+### no-node
+
+Type: `Boolean`<br>
+Default: `false`
+
+Set to `true` to ignore `package.json` and not handle the project as a Node.js package.
+
+### no-vlang
+
+Type: `Boolean`<br>
+Default: `false`
+
+Set to `true` not to ignore `v.mod` and not handle the project as a V package.
+
+### no-rust
+
+Type: `Boolean`<br>
+Default: `false`
+
+Set to `true` not to ignore `Cargo.toml` and not handle the project as a Rust package.
+
 ### bump-files
 
 Type: `String`<br>

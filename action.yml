@@ -15,6 +15,18 @@ inputs:
     description: >-
       Can be set to `false` to prevent this action from running. It's helpful in the pipeline, which will not continue releasing, but only building and testing, and that will be decided in the middle of a job execution.
     default: true
+  no-node:
+    description: >-
+      Set to `true` to ignore `package.json` and not handle the project as a Node.js package.
+    default: false
+  no-vlang:
+    description: >-
+      Set to `true` not to ignore `v.mod` and not handle the project as a V package.
+    default: false
+  no-rust:
+    description: >-
+      Set to `true` not to ignore `Cargo.toml` and not handle the project as a Rust package.
+    default: false
   bump-files:
     description: >-
       Extra files in which to bump the version number, in addition to the package description file.
@@ -69,26 +81,57 @@ runs:
     id: bump
     shell: bash
     env:
+      BV_NO_NODE: ${{ inputs.no-node }}
+      BV_NO_VLANG: ${{ inputs.no-vlang }}
+      BV_NO_RUST: ${{ inputs.no-rust }}
       BV_FILES: ${{ inputs.bump-files }}
       BV_DRY: ${{ inputs.dry-run }}
       BV_DEBUG: ${{ inputs.debug }}
     run: |
       VP_OPTIONS="-v --no-commit --no-failure"
-      if [[ ! -f "v.mod" ]]; then
-        if [[ ! -f "package.json" ]]; then
-          echo "v.mod or package.json not found, only updating changelog"
-          VP_OPTIONS="$VP_OPTIONS --no-bump"
-        else
-          echo "v.mod not found, package.json found"
-          VP_OPTIONS="$VP_OPTIONS --no-vlang"
-        fi
+      if [[ "$BV_NO_NODE" == "true" ]]; then
+        echo "Node.js detection disabled"
+        VP_OPTIONS="$VP_OPTIONS --no-node"
+      fi
+      if [[ "$BV_NO_VLANG" == "true" ]]; then
+        echo "V detection disabled"
+        VP_OPTIONS="$VP_OPTIONS --no-vlang"
+      fi
+      if [[ "$BV_NO_RUST" == "true" ]]; then
+        echo "Rust detection disabled"
+        VP_OPTIONS="$VP_OPTIONS --no-rust"
+      fi
+      BUMPED=""
+      if [[ ! -f "v.mod" && "$BV_NO_VLANG" != "true" ]]; then
+        echo "v.mod not found"
+        VP_OPTIONS="$VP_OPTIONS --no-vlang"
       else
-        if [[ ! -f "package.json" ]]; then
-          echo "v.mod found, package.json not found"
-          VP_OPTIONS="$VP_OPTIONS --no-node"
-        else
-          echo "v.mod and package.json found"
+        if [[ -f "v.mod" && "$BV_NO_VLANG" != "true" ]]; then
+          echo "v.mod found"
+          BUMPED="1"
         fi
+      fi
+      if [[ ! -f "package.json" && "$BV_NO_NODE" != "true" ]]; then
+        echo "package.json not found"
+        VP_OPTIONS="$VP_OPTIONS --no-node"
+      else
+        if [[ -f "package.json" && "$BV_NO_NODE" != "true" ]]; then
+          echo "package.json found"
+          BUMPED="1"
+        fi
+      fi
+      if [[ ! -f "Cargo.toml" && "$BV_NO_RUST" != "true" ]]; then
+        echo "Cargo.toml not found"
+        VP_OPTIONS="$VP_OPTIONS --no-rust"
+      else
+        if [[ -f "Cargo.toml" && "$BV_NO_RUST" != "true" ]]; then
+          echo "Cargo.toml found"
+          BUMPED="1"
+        fi
+      fi
+      if [[ "$BUMPED" == "" ]]; then
+        echo "v.mod, package.json nor Cargo.toml not found, only updating changelog"
+        VP_OPTIONS="$VP_OPTIONS --no-bump"
       fi
       if [[ "$BV_FILES" != "" ]]; then
         echo "extra files to bump version in: $BV_FILES"
