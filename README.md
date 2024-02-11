@@ -27,7 +27,7 @@ jobs:
         bump-files: src/newchanges.v
 ```
 
-**Attantion**: This action can be used only to update an already published project. The first publishing has to happen manually:
+**Attention**: This action can be used only to update an already published project. The first publishing has to happen manually:
 
 1. Changelog with the first version has to be added, for example, a file `CHANGELOG.md`:
 
@@ -105,7 +105,7 @@ Files modified by this action, separated by spaces.
 
 ## License
 
-Copyright (C) 2023 Ferdinand Prantl
+Copyright (C) 2023-2024 Ferdinand Prantl
 
 Licensed under the [MIT License].
 

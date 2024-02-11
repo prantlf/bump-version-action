@@ -75,8 +75,20 @@ runs:
     run: |
       VP_OPTIONS="-v --no-commit --no-failure"
       if [[ ! -f "v.mod" ]]; then
-        echo "v.mod not found, only updating changelog"
-        VP_OPTIONS="$VP_OPTIONS --no-bump"
+        if [[ ! -f "package.json" ]]; then
+          echo "v.mod or package.json not found, only updating changelog"
+          VP_OPTIONS="$VP_OPTIONS --no-bump"
+        else
+          echo "v.mod not found, package.json found"
+          VP_OPTIONS="$VP_OPTIONS --no-vlang"
+        fi
+      else
+        if [[ ! -f "package.json" ]]; then
+          echo "v.mod found, package.json not found"
+          VP_OPTIONS="$VP_OPTIONS --no-node"
+        else
+          echo "v.mod and package.json found"
+        fi
       fi
       if [[ "$BV_FILES" != "" ]]; then
         echo "extra files to bump version in: $BV_FILES"
