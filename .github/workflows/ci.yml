@@ -16,13 +16,10 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout sources
-      uses: actions/checkout@v4
-    - name: Test early
+    - uses: actions/checkout@v4
+    - uses: ./
       id: early
-      uses: ./
-    - name: Clean commits
-      run: |
+    - run: |
         if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
           echo "committing ${{ steps.early.outputs.new-version }}:"
           echo "${{ steps.early.outputs.changed-files }}"
@@ -31,29 +28,24 @@ jobs:
           git commit -am "${{ steps.early.outputs.new-version }}"
           git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
         fi
-    - name: Test nothing
+    - uses: ./
       id: nothing
-      uses: ./
-    - name: Check nothing
-      run: |
+    - run: |
         if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
           echo "unexpectedly bumped"
           exit 1
         fi
-    - name: Prepare commit
-      run: |
+    - run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         echo "test" > test
         git add test
         git commit -m "feat: Add test"
-    - name: Test bumping
+    - uses: ./
       id: bumping
-      uses: ./
       with:
         bump-files: v.ini
-    - name: Check bumping
-      run: |
+    - run: |
         if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
           if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
             echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
@@ -76,13 +68,10 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-    - name: Checkout sources
-      uses: actions/checkout@v4
-    - name: Test early
+    - uses: actions/checkout@v4
+    - uses: ./
       id: early
-      uses: ./
-    - name: Clean commits
-      run: |
+    - run: |
         if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
           echo "committing ${{ steps.early.outputs.new-version }}:"
           echo "${{ steps.early.outputs.changed-files }}"
@@ -91,29 +80,24 @@ jobs:
           git commit -am "${{ steps.early.outputs.new-version }}"
           git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
         fi
-    - name: Test nothing
+    - uses: ./
       id: nothing
-      uses: ./
-    - name: Check nothing
-      run: |
+    - run: |
         if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
           echo "unexpectedly bumped"
           exit 1
         fi
-    - name: Prepare commit
-      run: |
+    - run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         echo "test" > test
         git add test
         git commit -m "feat: Add test"
-    - name: Test bumping
+    - uses: ./
       id: bumping
-      uses: ./
       with:
         bump-files: v.ini
-    - name: Check bumping
-      run: |
+    - run: |
         if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
           if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
             echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
@@ -136,13 +120,10 @@ jobs:
   # windows:
   #   runs-on: windows-latest
   #   steps:
-  #   - name: Checkout sources
-  #     uses: actions/checkout@v4
-  #   - name: Test early
+  #   - uses: actions/checkout@v4
+  #   - uses: ./
   #     id: early
-  #     uses: ./
-  #   - name: Clean commits
-  #     run: |
+  #   - run: |
   #       if [ "${{ steps.early.outputs.bumped }}" == "true" ]; then
   #         echo "committing ${{ steps.early.outputs.new-version }}:"
   #         echo "${{ steps.early.outputs.changed-files }}"
@@ -151,29 +132,24 @@ jobs:
   #         git commit -am "${{ steps.early.outputs.new-version }}"
   #         git tag -a "v${{ steps.early.outputs.new-version }}" -m "${{ steps.early.outputs.new-version }}"
   #       fi
-  #   - name: Test nothing
-  #     id: nothing
+  #   - id: nothing
   #     uses: ./
-  #   - name: Check nothing
-  #     run: |
+  #   - run: |
   #       if [ "${{ steps.nothing.outputs.bumped }}" == "true" ]; then
   #         echo "unexpectedly bumped"
   #         exit 1
   #       fi
-  #   - name: Prepare commit
-  #     run: |
+  #   - run: |
   #       git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
   #       git config --global user.name "github-actions[bot]"
   #       echo "test" > test
   #       git add test
   #       git commit -m "feat: Add test"
-  #   - name: Test bumping
+  #   - uses: ./
   #     id: bumping
-  #     uses: ./
   #     with:
   #       bump-files: v.ini
-  #   - name: Check bumping
-  #     run: |
+  #   - run: |
   #       if [ "${{ steps.bumping.outputs.bumped }}" == "true" ]; then
   #         if [ "${{ steps.bumping.outputs.new-version }}" != "" ]; then
   #           echo "bumped to version ${{ steps.bumping.outputs.new-version }}"
@@ -201,10 +177,8 @@ jobs:
       # - windows
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout sources
-      uses: actions/checkout@v4
-    - name: Publish release
-      uses: prantlf/publish-release-action@v1
+    - uses: actions/checkout@v4
+    - uses: prantlf/publish-release-action@v1
       with:
         no-bump: true
         no-archives: true
