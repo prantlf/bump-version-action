@@ -23,6 +23,10 @@ inputs:
     description: >-
       Set to `true` not to ignore `v.mod` and not handle the project as a V package.
     default: false
+  no-golang:
+    description: >-
+      Set to `true` not to ignore `go.mod` and not handle the project as a Go package.
+    default: false
   no-rust:
     description: >-
       Set to `true` not to ignore `Cargo.toml` and not handle the project as a Rust package.
@@ -84,6 +88,7 @@ runs:
       BV_NO_NODE: ${{ inputs.no-node }}
       BV_NO_VLANG: ${{ inputs.no-vlang }}
       BV_NO_RUST: ${{ inputs.no-rust }}
+      BV_NO_GOLANG: ${{ inputs.no-golang }}
       BV_FILES: ${{ inputs.bump-files }}
       BV_DRY: ${{ inputs.dry-run }}
       BV_DEBUG: ${{ inputs.debug }}
@@ -100,6 +105,10 @@ runs:
       if [[ "$BV_NO_RUST" == "true" ]]; then
         echo "Rust detection disabled"
         VP_OPTIONS="$VP_OPTIONS --no-rust"
+      fi
+      if [[ "$BV_NO_GOLANG" == "true" ]]; then
+        echo "Go detection disabled"
+        VP_OPTIONS="$VP_OPTIONS --no-golang"
       fi
       BUMPED=""
       if [[ ! -f "v.mod" && "$BV_NO_VLANG" != "true" ]]; then
@@ -129,8 +138,17 @@ runs:
           BUMPED="1"
         fi
       fi
+      if [[ ! -f "go.mod" && "$BV_NO_GOLANG" != "true" ]]; then
+        echo "go.mod not found"
+        VP_OPTIONS="$VP_OPTIONS --no-golang"
+      else
+        if [[ -f "go.mod" && "$BV_NO_GOLANG" != "true" ]]; then
+          echo "go.mod found"
+          BUMPED="1"
+        fi
+      fi
       if [[ "$BUMPED" == "" ]]; then
-        echo "v.mod, package.json nor Cargo.toml not found, only updating changelog"
+        echo "v.mod, package.json, Cargo.toml or go.mod not found, only updating changelog"
         VP_OPTIONS="$VP_OPTIONS --no-bump"
       fi
       if [[ "$BV_FILES" != "" ]]; then
