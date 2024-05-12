@@ -1,5 +1,11 @@
 # Changes
 
+## [2.2.0](https://github.com/prantlf/bump-version-action/compare/v2.1.0...v2.2.0) (2024-05-12)
+
+### Features
+
+* Support go modules ([233be37](https://github.com/prantlf/bump-version-action/commit/233be37b95a87af1bcdcc94712b64eaed9045924))
+
 ## [2.1.0](https://github.com/prantlf/bump-version-action/compare/v2.0.1...v2.1.0) (2024-02-11)
 
 ### Features
